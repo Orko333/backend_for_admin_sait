@@ -78,7 +78,7 @@ async def send_user_message(sid, data):
         db.add(msg); db.commit(); db.refresh(msg)
         payload = serialize_message(msg)
         if client_msg_id: payload['client_message_id'] = client_msg_id
-        await sio.emit('new_support_message', payload, room=f'user_{sess['user_id']}')
+        await sio.emit('new_support_message', payload, room=f"user_{sess['user_id']}")
     finally:
         db.close()
 

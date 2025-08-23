@@ -45,7 +45,16 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# Configure CORS using settings.cors_origins. If wildcard '*' is used we must not enable
+# supports_credentials because browsers won't accept '*' together with Access-Control-Allow-Credentials: true.
+if hasattr(settings, 'cors_origins') and settings.cors_origins and settings.cors_origins.strip() != '*':
+    _origins = [o.strip() for o in settings.cors_origins.split(',') if o.strip()]
+    _supports_credentials = True
+else:
+    _origins = '*'
+    _supports_credentials = False
+
+CORS(app, resources={r"/*": {"origins": _origins}}, supports_credentials=_supports_credentials)
 
 UPLOAD_ROOT = os.path.join(os.path.dirname(__file__), '..', 'uploaded_files')
 os.makedirs(UPLOAD_ROOT, exist_ok=True)

@@ -9,8 +9,22 @@ from models import User, Order, Message, Feedback, Promocode, PromocodeUsage, Or
 from datetime import timedelta
 
 settings = get_settings()
+from database import engine
+from models import Base as ModelBase
+from contextlib import asynccontextmanager
 
-app = FastAPI(title=settings.app_name, version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create tables if they do not exist (for rapid bootstrap). In production use Alembic.
+    try:
+        ModelBase.metadata.create_all(bind=engine)
+    except Exception as e:
+        print("[startup] table creation failed", e)
+    yield
+
+
+app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in settings.cors_origins.split(',')] if settings.cors_origins != '*' else ['*'],
@@ -18,17 +32,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-from database import engine
-from models import Base as ModelBase
-
-@app.on_event("startup")
-def on_startup():
-    # Create tables if they do not exist (for rapid bootstrap). In production use Alembic.
-    try:
-        ModelBase.metadata.create_all(bind=engine)
-    except Exception as e:
-        print("[startup] table creation failed", e)
 
 @app.get("/health")
 async def health():

@@ -1,1 +1,1 @@
-web: uvicorn asgi:application --host 0.0.0.0 --port $PORT --proxy-headers --loop asyncio
+web: gunicorn flask_app:app --bind 0.0.0.0:$PORT --workers=4 --timeout 120

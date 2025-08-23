@@ -1,6 +1,6 @@
-fastapi
-uvicorn[standard]
-python-multipart
+Flask==3.0.3
+flask-cors==4.0.0
+gunicorn==21.2.0
 psycopg2-binary
 python-jose[cryptography]
 passlib[bcrypt]
@@ -9,11 +9,16 @@ pydantic-settings
 bcrypt
 python-dotenv
 SQLAlchemy==2.0.25
-alembic
-redis
-celery
 itsdangerous
 requests
-websockets
-python-socketio[asgi]
-aiofiles
+
+# (Optional legacy deps from FastAPI version, keep commented for now)
+# fastapi
+# uvicorn[standard]
+# python-multipart
+# alembic
+# redis
+# celery
+# websockets
+# python-socketio[asgi]
+# aiofiles

@@ -25,10 +25,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+# Configure CORS carefully: if a wildcard origin is used we must NOT set allow_credentials=True
+# because Starlette/Browser will not accept wildcard origins when credentials are allowed.
+if settings.cors_origins and settings.cors_origins.strip() != '*':
+    _allow_origins = [o.strip() for o in settings.cors_origins.split(',') if o.strip()]
+    _allow_credentials = True
+else:
+    _allow_origins = ['*']
+    _allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in settings.cors_origins.split(',')] if settings.cors_origins != '*' else ['*'],
-    allow_credentials=True,
+    allow_origins=_allow_origins,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

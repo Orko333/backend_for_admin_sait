@@ -13,7 +13,7 @@ itsdangerous
 requests
 
 # (Optional legacy deps from FastAPI version, keep commented for now)
-# fastapi
+fastapi
 # uvicorn[standard]
 # python-multipart
 # alembic

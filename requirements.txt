@@ -11,6 +11,7 @@ python-dotenv
 SQLAlchemy==2.0.25
 itsdangerous
 requests
+python-multipart
 
 # (Optional legacy deps from FastAPI version, keep commented for now)
 fastapi
